@@ -1,0 +1,40 @@
+# Simple Financial Data Analysis Script
+# Calculate revenue growth and profit margin
+
+import pandas as pd
+
+# Load data from the Excel file
+data = pd.read_excel('Github/Sample_costrevenuedata.xls', sheet_name='FINC')
+
+# Extract columns into lists for easier manipulation
+years = data['years'].tolist()
+revenue = data['revenue'].tolist()
+costs = data['costs'].tolist()
+
+# Calculate revenue growth
+growth_rates = []
+for i in range(1, len(revenue)):
+    growth = ((revenue[i] - revenue[i-1]) / revenue[i-1]) * 100
+    growth_rates.append(growth)
+    print(f"Revenue growth from {years[i-1]} to {years[i]}: {growth:.2f}%")
+
+# Calculate profit margin
+profit_margins = []
+for i in range(len(revenue)):
+    profit = revenue[i] - costs[i]
+    margin = (profit / revenue[i]) * 100
+    profit_margins.append(margin)
+    print(f"Profit margin for {years[i]}: {margin:.2f}%")
+
+# Prepare results in a DataFrame for export
+results = pd.DataFrame({
+    'Year': years,
+    'Revenue': revenue,
+    'Costs': costs,
+    'Profit Margin (%)': [None] + profit_margins  # Align with years, first year has no growth
+})
+results['Revenue Growth (%)'] = [None] + growth_rates  # First year has no prior year for growth
+
+# Export results to an Excel file
+results.to_excel('Github/FINCexport.xlsx', sheet_name='FINC2', index=False)
+print("Results exported to 'Github/FINCexport.xlsx'")
